@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/APPSTARTCN.png</file>
+    </qresource>
+</RCC>
