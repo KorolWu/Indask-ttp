@@ -1,12 +1,32 @@
 ﻿#include "sharedata.h"
 
-ShareData *ShareData::Instance = new ShareData();
+ShareData * ShareData::m_Instance = new ShareData();
+QMutex ShareData::m_mutex;
 ShareData::ShareData()
 {
-   // m_DI_Status.clear();
+
 }
 
-ShareData *ShareData::GetInstance()
+ShareData *ShareData::getInstance()
 {
-    return Instance;
+    if(m_Instance == nullptr)
+    {
+        QMutexLocker mutexLocker(&m_mutex);
+         if(m_Instance == nullptr)
+        {
+            m_Instance = new ShareData();
+        }
+
+    }
+    return m_Instance;
+}
+
+void ShareData::deleteInstance()
+{
+    if(m_Instance != nullptr)
+    {
+        m_axisParameterMap.clear();
+        m_Instance = nullptr;
+        delete m_Instance;
+    }
 }

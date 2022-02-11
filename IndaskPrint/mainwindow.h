@@ -1,13 +1,27 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+#include <QMainWindow>
+
+#include "stdafx.h"
+
+// Standard libraries
+#include <stdio.h>
+#include <time.h>
+
+// Meteor specific includes
+#include "PrinterInterface.h"	// Contains definitions for all the Meteor library functions
+#include "Meteor.h"				// Definition of common datatypes and constants
+
+// Utility functions for handling bitmaps and generating image commands in the correct format
+#include "Bitmaps.h"
 #include <QFont>
 #include <QLabel>
 #include <QScreen>
 #include <QWidget>
 #include <QTreeView>
 #include <QTreeWidget>
-#include <QMainWindow>
 #include <QTextEdit>
 #include "sharedata.h"
 #include <QDateTime>
@@ -16,7 +30,16 @@
 #include <QPushButton>
 #include <QGroupBox>
 #include <QTimer>
+#include <QThread>
 #include <QCoreApplication>
+#include "Bitmaps.h"
+#include "pccandhdcstatuswidget.h"
+#include "axisstatuswidget.h"
+#include "Camera/camerawidget.h"
+#include "QsLog.h"
+#include "Delta/dmcnetcontrol.h"
+#include "ttpdevice.h"
+#include "pccwork.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -36,6 +59,7 @@ public slots:
     void appendLog(const QString &message, int level);
     void home();
     void emgStop();
+    void onTimout();
 private:
     Ui::MainWindow *ui;
     QLabel *m_hsLog;
@@ -58,7 +82,9 @@ private:
     QStandardItem *p_xxyItem;
     QStandardItem *p_positionItem;
     QTextEdit *m_pLogText;
-     QString m_path;
+    QString m_path;
+    int m_inited = 1;   //是否初始化通过
+    bool m_isHomed = false; //是否回过原点
     void initParameter();
     bool initSqlite();
     void getIniParameter(const int axisId);
@@ -73,6 +99,27 @@ private:
     bool beginIn(const int &dir);
     bool getGlass();
     bool printX();
-    bool printFlow();
+    bool printFlow_test();
+
+    QTimer *m_timer;
+
+
+
+    //------------------pccStateTableWidget------
+    PccAndHdcStatusWidget* m_pccTableWidget;
+
+    //------------------axisStatusWidget--------
+    AxisStatusWidget* m_pXaxisStatus;
+    AxisStatusWidget* m_pYaxisStatus;
+
+     CameraWidget *m_pCamera;
+     //-----------------axisMove-----------
+     DmcNetControl m_dmNetControl;
+     //-----------------printDevice--------
+    TtpDevice m_ttpDevice;
+    PccWork* m_pccWork;
+    QThread m_thread;
+signals:
+    void startPccWork();
 };
 #endif // MAINWINDOW_H

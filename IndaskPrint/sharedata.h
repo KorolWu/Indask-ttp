@@ -1,42 +1,27 @@
 ﻿#ifndef SHAREDATA_H
 #define SHAREDATA_H
-#include <QString>
-#include <QObject>
-#include <QMap>
-//#include "QsLog.h"
-//#include "QsLogDest.h"
-//#include "QsLogLevel.h"
-//#include "DataStruct.h"
 
+#include <QMutex>
+#include <QMutexLocker>
+#include <QMap>
+#include "Delta/DataStruct.h"
 class ShareData
 {
 private:
     ShareData();
-    static ShareData* Instance;
-
 public:
-    static ShareData* GetInstance();
+    static ShareData* m_Instance;
+    static QMutex m_mutex;
+    static ShareData* getInstance();
+    QMap<uint16_t,AxisStruct> m_axisParameterMap;
+    QMap<uint32_t,PccStatus> m_pccStatusMap;
+    uint32_t m_headCount = 1; //head count
+
+
     int m_width;
     int m_heitht;
-    //板卡是否初始化
-    bool m_DriverIsInitialization = false;
-    //是否满足开始条件，是否在初始位置
-    bool m_isHomePosition = false;
-    //carNum, dIstatus
-   // QMap <int,DIInfostru> m_DI_Status;
-    //carNum, axisStruct
-    //QMap <int,AxisStruct> m_axisMap;
+    void deleteInstance();
 
-    //axis,curPosition
-    QMap <int,long int> m_axisPositonMap;
-    //用来保存所有的点位，<点位名称，点位信息>
-    QMap<QString,QMap<int,int>> m_position;
-
-    //用来保存相机对应的信息<相机名称，相机信息>
-   // QMap<QString,VisionStu>m_visionMap;
-
-    //用来保存喷头的设置信息
-  //  NozzleStu m_nozzleStu;
 };
 
 #endif // SHAREDATA_H
